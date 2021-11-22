@@ -9,4 +9,9 @@ public class CanvasButtons : MonoBehaviour
         // связано с багом юнити редактора и в проде такой проблемы нет
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+    public void LoadInstagram()
+    {
+        Application.OpenURL("https://www.instagram.com/per.pointt/");
+    }
 }
