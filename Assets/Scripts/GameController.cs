@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
 
 using System;
 using System.Collections;
@@ -16,9 +18,12 @@ public class GameController : MonoBehaviour
 
     private float camMoveToYPosition, camMoveSpeed = 2f;
 
-    public GameObject cubeToCreate, allCubes, vfx;
+    public Text scoreTxt;
 
-    public GameObject[] canvasStartPage;
+
+    public GameObject allCubes, vfx;
+
+    public GameObject[] canvasStartPage, cubesToCreate;
 
     private Rigidbody allCubesRb;
 
@@ -32,6 +37,8 @@ public class GameController : MonoBehaviour
     private Transform mainCam;
 
     private int prevCountMaxHorizontal;
+
+    private List<GameObject> posibleCubesToCreate = new List<GameObject>();
 
 
     private List<Vector3> allCubesPositions = new List<Vector3> {
@@ -49,6 +56,30 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+
+        if (PlayerPrefs.GetInt("score") < 5)
+            posibleCubesToCreate.Add(cubesToCreate[0]);
+        else if (PlayerPrefs.GetInt("score") < 10)
+            AddPosibleCubes(2);
+        else if (PlayerPrefs.GetInt("score") < 15)
+            AddPosibleCubes(3);
+        else if (PlayerPrefs.GetInt("score") < 25)
+            AddPosibleCubes(4);
+        else if (PlayerPrefs.GetInt("score") < 35)
+            AddPosibleCubes(5);
+        else if (PlayerPrefs.GetInt("score") < 50)
+            AddPosibleCubes(6);
+        else if (PlayerPrefs.GetInt("score") < 70)
+            AddPosibleCubes(7);
+        else if (PlayerPrefs.GetInt("score") < 90)
+            AddPosibleCubes(8);
+        else if (PlayerPrefs.GetInt("score") < 110)
+            AddPosibleCubes(9);
+        else
+            AddPosibleCubes(10);
+
+        scoreTxt.text = "<size=40>BEST:</size> " + PlayerPrefs.GetInt("score") + "\n<size=35>NOW:</size> 0";
+
 
         mainCam = Camera.main.transform;
 
@@ -77,7 +108,13 @@ public class GameController : MonoBehaviour
                 }
             }
 
-            GameObject newCube = Instantiate(cubeToCreate, cubeToPlace.position, Quaternion.identity) as GameObject;
+            GameObject createCube = null;
+            if (posibleCubesToCreate.Count == 1)
+                createCube = posibleCubesToCreate[0];
+            else
+                createCube = posibleCubesToCreate[UnityEngine.Random.Range(0, posibleCubesToCreate.Count)];
+
+            GameObject newCube = Instantiate(createCube, cubeToPlace.position, Quaternion.identity) as GameObject;
 
             newCube.transform.SetParent(allCubes.transform);
             nowCube.setVector(cubeToPlace.position);
@@ -119,6 +156,12 @@ public class GameController : MonoBehaviour
 
             yield return new WaitForSeconds(cubeChangePlaceSpeed);
         }
+    }
+
+    private void AddPosibleCubes(int till)
+    {
+        for (int i = 0; i < till; i++)
+            posibleCubesToCreate.Add(cubesToCreate[i]);
     }
 
     private void SpawnPositions()
@@ -169,6 +212,13 @@ public class GameController : MonoBehaviour
             if (Mathf.Abs(Convert.ToInt32(item.z)) > maxZ)
                 maxZ = Convert.ToInt32(item.z);
         }
+
+        maxY--;
+
+        if (PlayerPrefs.GetInt("score") < maxY)
+            PlayerPrefs.SetInt("score", maxY);
+
+        scoreTxt.text = "<size=40>BEST:</size> " + PlayerPrefs.GetInt("score") + "\n<size=35>NOW:</size> " + maxY;
 
         camMoveToYPosition = 5.9f + nowCube.y - 1f;
 
