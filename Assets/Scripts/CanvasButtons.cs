@@ -24,20 +24,12 @@ public class CanvasButtons : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void LoadShop()
+    public void LoadScene(string sceneName)
     {
         if (PlayerPrefs.GetString("music") != "No")
             GetComponent<AudioSource>().Play();
 
-        SceneManager.LoadScene("Shop");
-    }
-
-    public void CloseShop()
-    {
-        if (PlayerPrefs.GetString("music") != "No")
-            GetComponent<AudioSource>().Play();
-
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene(sceneName);
     }
 
     public void LoadInstagram()
